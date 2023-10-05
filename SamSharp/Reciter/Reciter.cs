@@ -57,8 +57,6 @@ namespace SamSharp.Reciter
 
         private char? CharAt(string text, int pos) => pos >= text.Length ? (char?)null : text[pos];
         
-        private bool IsOneOf<T>(T text, params T[] arr) => arr.Contains(text);
-
         /// <summary>
         /// Set a phoneme in the buffer.
         /// </summary>
@@ -103,7 +101,7 @@ namespace SamSharp.Reciter
                                 '.' => () => FlagsAt(text, --pos, CharFlags._0x08),
                                 // '&' - Previous char must be a diphthong or previous chars must be 'CH' or 'SH'
                                 '&' => () => FlagsAt(text, --pos, CharFlags.Diphthong) ||
-                                             IsOneOf(text.Substring(--pos, 2), "CH", "SH"),
+                                             text.Substring(--pos, 2) is "CH" or "SH",
                                 // '@' - Previous char must be voiced and not 'H'
                                 '@' => () =>
                                 {
@@ -117,7 +115,7 @@ namespace SamSharp.Reciter
 
                                     // FIXME: This is always true apparently
                                     // Check for 'T', 'C', 'S'
-                                    if (!IsOneOf(inputChar, 'T', 'C', 'S'))
+                                    if (inputChar is not ('T' or 'C' or 'S'))
                                         return false;
 
                                     throw new Exception("TCS didn't match, always false but happened?");
@@ -125,7 +123,7 @@ namespace SamSharp.Reciter
                                 // '^' - Previous char must be a consonant
                                 '^' => () => FlagsAt(text, --pos, CharFlags.Consonant),
                                 // '+' - Previous char must be either 'E', 'I' or 'Y'
-                                '+' => () => IsOneOf(text[--pos], 'E', 'I', 'Y'),
+                                '+' => () => text[--pos] is 'E' or 'I' or 'Y',
                                 // ':' - Walk left in input until we hit a non-consonant or beginning of string
                                 ':' => () =>
                                 {
@@ -172,7 +170,7 @@ namespace SamSharp.Reciter
                                 '.' => () => FlagsAt(text, ++pos, CharFlags._0x08),
                                 // '&' - Next char must be a diphthong or previous chars must be 'HC' or 'HS'
                                 '&' => () => FlagsAt(text, ++pos, CharFlags.Diphthong) ||
-                                             IsOneOf(text.Substring(++pos, 2), "HC", "HS"),
+                                             text.Substring(++pos, 2) is "HC" or "HS",
                                 // '@' - Previous char must be voiced and not 'H'
                                 '@' => () =>
                                 {
@@ -186,7 +184,7 @@ namespace SamSharp.Reciter
 
                                     // FIXME: This is always true apparently
                                     // Check for 'T', 'C', 'S'
-                                    if (!IsOneOf(inputChar, 'T', 'C', 'S'))
+                                    if (inputChar is not ('T' or 'C' or 'S'))
                                         return false;
 
                                     throw new Exception("TCS didn't match, always false but happened?");
@@ -194,7 +192,7 @@ namespace SamSharp.Reciter
                                 // '^' - Next char must be a consonant
                                 '^' => () => FlagsAt(text, ++pos, CharFlags.Consonant),
                                 // '+' - Next char must be either 'E', 'I' or 'Y'
-                                '+' => () => IsOneOf(CharAt(text, ++pos), 'E', 'I', 'Y'),
+                                '+' => () => CharAt(text, ++pos) is 'E' or 'I' or 'Y',
                                 // ':' - Walk right in input until we hit a non-consonant
                                 ':' => () =>
                                 {
@@ -235,7 +233,7 @@ namespace SamSharp.Reciter
 
                                     // Not "ER", "ES" or "ED"
                                     // FIXME: Could break sometimes due to JS being stupid? Needs more testing
-                                    if (!IsOneOf(CharAt(text, pos + 2), 'R', 'S', 'D'))
+                                    if (CharAt(text, pos + 2) is not ('R' or 'S' or 'D'))
                                     {
                                         // Not "EL"
                                         if (CharAt(text, pos + 2) != 'L')
@@ -275,8 +273,11 @@ namespace SamSharp.Reciter
 
             bool Matches(string text, int pos)
             {
+                if (text.Length - pos < match.Length)
+                    return false;
+
                 // Check if content in brackets matches
-                if (!text[pos..].StartsWith(match))
+                if (!text.AsSpan(pos, match.Length).SequenceEqual(match))
                     return false;
                 
                 // Check left
@@ -326,7 +327,10 @@ namespace SamSharp.Reciter
             int c = 0;
             while (inputPos < text.Length && c++ < 10000)
             {
-                Debug.WriteLine($"Processing {text.ToLower()[..inputPos] + text[inputPos] + text.ToLower()[(inputPos+1)..]}");
+                if (Constants.ENABLE_DEBUGGER)
+                {
+                    Debug.WriteLine($"Processing {text.ToLower()[..inputPos] + text[inputPos] + text.ToLower()[(inputPos+1)..]}");
+                }
 
                 char currentChar = text[inputPos];
                 // Not '.' or '.' followed by number
