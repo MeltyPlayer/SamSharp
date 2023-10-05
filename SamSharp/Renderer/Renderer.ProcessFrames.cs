@@ -131,14 +131,14 @@ namespace SamSharp.Renderer
                         int rect = rp3 * (byte)(framesData.Amplitudes.Formant3[pos] & 0x0F);
 
                         int mux = sin1 + sin2 + rect;
-                        mux /= 32;
+                        mux >>= 5;
                         mux += 128; // Go from signed to unsigned amplitude
                         // mux &= 0xF0;
 
                         ary[k] = (byte) mux;
-                        p1 += framesData.Frequencies.Mouth[pos] * 256 / 4;  // Compromise, this becomes a shift and works well
-                        p2 += framesData.Frequencies.Throat[pos] * 256 / 4;
-                        p3 += framesData.Frequencies.Formant3[pos] * 256 / 4; 
+                        p1 += framesData.Frequencies.Mouth[pos] << 6;  // Compromise, this becomes a shift and works well
+                        p2 += framesData.Frequencies.Throat[pos] << 6;
+                        p3 += framesData.Frequencies.Formant3[pos] << 6; 
                     }
                     output.Ary(0, ary);
                     
