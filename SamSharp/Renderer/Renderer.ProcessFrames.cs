@@ -95,7 +95,7 @@ namespace SamSharp.Renderer
             int glottalPulse = framesData.Pitches[0];
             int mem38 = (int)(glottalPulse * .75f);
 
-            Span<int> ary = stackalloc int[5];
+            Span<byte> ary = stackalloc byte[5];
             while (frameCount > 0)
             {
                 var flags = framesData.SampledConsonantFlags[pos];
@@ -135,7 +135,7 @@ namespace SamSharp.Renderer
                         mux += 128; // Go from signed to unsigned amplitude
                         // mux &= 0xF0;
 
-                        ary[k] = mux;
+                        ary[k] = (byte) mux;
                         p1 += framesData.Frequencies.Mouth[pos] * 256 / 4;  // Compromise, this becomes a shift and works well
                         p2 += framesData.Frequencies.Throat[pos] * 256 / 4;
                         p3 += framesData.Frequencies.Formant3[pos] * 256 / 4; 

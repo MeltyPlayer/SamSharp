@@ -17,8 +17,8 @@ namespace SamSharp.Renderer
 
         public void Write(int index, int a)
         {
-            int scaled = ((a & 15) * 16) & 0xFF;
-            Ary(index, new[] { scaled, scaled, scaled, scaled, scaled });
+            byte scaled = (byte) (((a & 15) * 16) & 0xFF);
+            Ary(index, new [] { scaled, scaled, scaled, scaled, scaled });
         }
 
         // Timetable for more accurate C64 simulation
@@ -31,7 +31,7 @@ namespace SamSharp.Renderer
           199, 0, 0, 54, 54, // Voiced sample 1
         };
 
-        public void Ary(int index, Span<int> array)
+        public void Ary(int index, ReadOnlySpan<byte> array)
         {
             bufferPos += timetable[5 * oldTimeTableIndex + index];
 
@@ -39,18 +39,14 @@ namespace SamSharp.Renderer
                 throw new Exception($"Buffer overflow, want {bufferPos / 50} but buffer size is {buffer.Length}");
 
             oldTimeTableIndex = index;
-            
+
             // Write a little bit in advance
-            for (int k = 0; k < 5; k++)
-                buffer[bufferPos / 50 + k] = (byte)array[k];
+            array.CopyTo(buffer.AsSpan(bufferPos / 50));
         }
 
         public byte[] Get()
         {
-            byte[] bytes = new byte[bufferPos / 50];
-            for (int i = 0; i < bufferPos / 50; i++)
-                bytes[i] = (byte)(buffer[i]);
-            return bytes;
+            return buffer.AsSpan(0, bufferPos / 50).ToArray();
         }
-    }
+  }
 }
