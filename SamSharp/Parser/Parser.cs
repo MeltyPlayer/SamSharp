@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace SamSharp.Parser
 {
@@ -9,9 +10,12 @@ namespace SamSharp.Parser
         private Dictionary<int, int?> stresses;        // Numbers from 0 to 8
         private Dictionary<int, int?> phonemeLengths;
         private Dictionary<int, int?> phonemeIndexes;
-        
-        
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private string? GetPhonemeNamePos(int? pos) => pos is null || phonemeIndexes[pos.Value] is null ? null : phonemeNameTable[phonemeIndexes[pos.Value]!.Value];
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private string? GetPhonemeName(int? phoneme) => phoneme is null ? null : phonemeNameTable[phoneme.Value];
         
         private int? GetPhoneme(int pos)
@@ -52,6 +56,7 @@ namespace SamSharp.Parser
             stresses[pos] = stressValue;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetStress(int pos) => stresses[pos] ?? 0;
 
         private void SetStress(int pos, int stressValue)
@@ -63,6 +68,7 @@ namespace SamSharp.Parser
             stresses[pos] = stressValue;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetLength(int pos) => phonemeLengths[pos] ?? 0;
 
         private void SetLength(int pos, int length)
@@ -93,6 +99,7 @@ namespace SamSharp.Parser
         private delegate int GetLengthDelegate(int pos);
         private delegate void SetLengthDelegate(int pos, int length);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool PhonemeHasFlag(int? phoneme, PhonemeFlags flag) =>
             phoneme is { } && Utils.MatchesBitmask((int)phonemeFlags[phoneme.Value], (int)flag);
 

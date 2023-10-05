@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace SamSharp.Renderer
 {
     public partial class Renderer
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         sbyte Sine(int x, bool useLookup = true) => 
             useLookup 
                 ? (sbyte)sinus[x]
@@ -164,9 +166,9 @@ namespace SamSharp.Renderer
                         {
                             // Update the phase of the formants
                             // TODO: We should have a switch to disable this, it causes a pretty nice voice without the masking!
-                            phase1 = phase1 + framesData.Frequencies.Mouth[pos]; // & 0xFF;
-                            phase2 = phase2 + framesData.Frequencies.Throat[pos]; // & 0xFF;
-                            phase3 = phase3 + framesData.Frequencies.Formant3[pos]; // & 0xFF;
+                            phase1 += framesData.Frequencies.Mouth[pos]; // & 0xFF;
+                            phase2 += framesData.Frequencies.Throat[pos]; // & 0xFF;
+                            phase3 += framesData.Frequencies.Formant3[pos]; // & 0xFF;
                             continue;
                         }
                     

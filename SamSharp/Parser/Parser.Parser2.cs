@@ -97,10 +97,13 @@ namespace SamSharp.Parser
                     // <DIPHTHONG ENDING WITH WX> -> <DIPHTHONG ENDING WITH WX> WX
                     // <DIPHTHONG NOT ENDING WITH WX> -> <DIPHTHONG NOT ENDING WITH WX> YX
                     // Example: OIL, COW
-                    Debug.WriteLine(!PhonemeHasFlag(phoneme, PhonemeFlags.DiphthongYx)
-                        ? $"{pos} RULE: insert WX following diphthong NOT ending in IY sound"
-                        : $"{pos} RULE: insert WX following diphthong ending in IY sound"
-                    );
+                    if (Constants.ENABLE_DEBUGGER)
+                    {
+                        Debug.WriteLine(!PhonemeHasFlag(phoneme, PhonemeFlags.DiphthongYx)
+                            ? $"{pos} RULE: insert WX following diphthong NOT ending in IY sound"
+                            : $"{pos} RULE: insert WX following diphthong ending in IY sound"
+                        );
+                    }
                     // If ends with IY, use YX, else use WX
                     // Insert at WX or YX following, copying the stress
                     // "WX" = 20 "YX" = 21
@@ -143,7 +146,10 @@ namespace SamSharp.Parser
                         phoneme = getPhoneme(pos + 2);
                         if (phoneme != null && PhonemeHasFlag(phoneme, PhonemeFlags.Vowel) && getStress(pos + 2) != 0)
                         {
-                            Debug.WriteLine($"{pos + 2} RULE: Insert glottal stop between two stressed vowels with space between them");
+                            if (Constants.ENABLE_DEBUGGER)
+                            {
+                                Debug.WriteLine($"{pos + 2} RULE: Insert glottal stop between two stressed vowels with space between them");
+                            }
                             insertPhoneme(pos + 2, 31, 0); // 31 == "Q"
                         }
                     }
@@ -159,14 +165,20 @@ namespace SamSharp.Parser
                         case pT:
                         {
                             // Example: TRACK
-                            Debug.WriteLine($"{pos} RULE: T* R* -> CH R*");
+                            if (Constants.ENABLE_DEBUGGER)
+                            {
+                                Debug.WriteLine($"{pos} RULE: T* R* -> CH R*");
+                            }
                             setPhoneme(pos - 1, 42);
                             break;
                         }
                         case pD:
                         {
                             // Example: DRY
-                            Debug.WriteLine($"{pos} RULE: D* R* -> J* R*");
+                            if (Constants.ENABLE_DEBUGGER)
+                            {
+                                Debug.WriteLine($"{pos} RULE: D* R* -> J* R*");
+                            }
                             setPhoneme(pos - 1, 44);
                             break;
                         }
@@ -175,7 +187,10 @@ namespace SamSharp.Parser
                             if (PhonemeHasFlag(priorPhoneme, PhonemeFlags.Vowel))
                             {
                                 // Example: ART
-                                Debug.WriteLine($"{pos} RULE: <VOWEL> R* -> <VOWEL> RX");
+                                if (Constants.ENABLE_DEBUGGER)
+                                {
+                                    Debug.WriteLine($"{pos} RULE: <VOWEL> R* -> <VOWEL> RX");
+                                }
                                 setPhoneme(pos, 18);
                             }
 
@@ -189,7 +204,10 @@ namespace SamSharp.Parser
                 if (phoneme == 24 && PhonemeHasFlag(priorPhoneme, PhonemeFlags.Vowel))
                 {
                     // Example: ALL
-                    Debug.WriteLine($"{pos} RULE: <VOWEL> L* -> <VOWEL> LX");
+                    if (Constants.ENABLE_DEBUGGER)
+                    {
+                        Debug.WriteLine($"{pos} RULE: <VOWEL> L* -> <VOWEL> LX");
+                    }
                     setPhoneme(pos, 19);
                     continue;
                 }
@@ -206,7 +224,10 @@ namespace SamSharp.Parser
                     if (!PhonemeHasFlag(phoneme2, PhonemeFlags.DiphthongYx) && phoneme2 != null)
                     {
                         // Replace G with GX and continue processing next phoneme
-                        Debug.WriteLine($"{pos} RULE: G <VOWEL OR DIPTHONG NOT ENDING WITH IY> -> GX <VOWEL OR DIPHTHONG NOT ENDING WITH IY>");
+                        if (Constants.ENABLE_DEBUGGER)
+                        {
+                            Debug.WriteLine($"{pos} RULE: G <VOWEL OR DIPTHONG NOT ENDING WITH IY> -> GX <VOWEL OR DIPHTHONG NOT ENDING WITH IY>");
+                        }
                         setPhoneme(pos, 63);
                     }
 
@@ -224,7 +245,10 @@ namespace SamSharp.Parser
                     if (!PhonemeHasFlag(phoneme2, PhonemeFlags.DiphthongYx) || phoneme2 == null)
                     {
                         // VOWELS AND DIPHTHONGS ENDING WITH IY SOUND flag set?
-                        Debug.WriteLine($"{pos} RULE: K <VOWEL OR DIPTHONG NOT ENDING WITH IY> -> KX <VOWEL OR DIPHTHONG NOT ENDING WITH IY>");
+                        if (Constants.ENABLE_DEBUGGER)
+                        {
+                            Debug.WriteLine($"{pos} RULE: K <VOWEL OR DIPTHONG NOT ENDING WITH IY> -> KX <VOWEL OR DIPHTHONG NOT ENDING WITH IY>");
+                        }
                         setPhoneme(pos, 75);
                         phoneme = 75;
                     }
@@ -241,7 +265,10 @@ namespace SamSharp.Parser
                     //   'S*' 'UM' -> 'S*' '**'
                     //   'S*' 'UN' -> 'S*' '**'
                     // Examples: SPY, STY, SKY, SCOWL
-                    Debug.WriteLine($"{pos} RULE: S* {GetPhonemeName(phoneme)} -> S* {GetPhonemeName(phoneme - 12)}");
+                    if (Constants.ENABLE_DEBUGGER)
+                    {
+                        Debug.WriteLine($"{pos} RULE: S* {GetPhonemeName(phoneme)} -> S* {GetPhonemeName(phoneme - 12)}");
+                    }
                     setPhoneme(pos, phoneme.Value - 12);
                 }
                 else if (!PhonemeHasFlag(phoneme, PhonemeFlags.UnvoicedStopConsonant))
@@ -267,15 +294,21 @@ namespace SamSharp.Parser
 
                         if (PhonemeHasFlag(phoneme, PhonemeFlags.Vowel) && getStress(pos + 1) == 0)
                         {
-                            Debug.WriteLine($"{pos} RULE: Soften T or D following vowel or ER and preceding a pause -> DX");
+                            if (Constants.ENABLE_DEBUGGER)
+                            {
+                                Debug.WriteLine($"{pos} RULE: Soften T or D following vowel or ER and preceding a pause -> DX");
+                            }
                             setPhoneme(pos, 30);
                         } 
                     }
 
                     continue;
                 }
-                
-                Debug.WriteLine($"{pos}: {GetPhonemeName(phoneme)}");
+
+                if (Constants.ENABLE_DEBUGGER)
+                {
+                    Debug.WriteLine($"{pos}: {GetPhonemeName(phoneme)}");
+                }
             }
         }
     }

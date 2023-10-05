@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace SamSharp.Reciter
 {
@@ -44,6 +44,7 @@ namespace SamSharp.Reciter
         /// <param name="c">The char to test.</param>
         /// <param name="flags">The flags to test against.</param>
         /// <returns>Whether the char matches against the flags.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool MatchesFlags(char? c, CharFlags flags) => (c is null ? 0 : charFlags[c.Value] & flags) != 0;
         
         /// <summary>
@@ -53,8 +54,10 @@ namespace SamSharp.Reciter
         /// <param name="pos">The char's index.</param>
         /// <param name="flags">The flags to match against.</param>
         /// <returns>Whether the char at pos matches against the flags.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool FlagsAt(string text, int pos, CharFlags flags) => MatchesFlags(CharAt(text, pos), flags); // JS is stupid (text[pos] will return undefined if pos is out of range)
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private char? CharAt(string text, int pos) => pos >= text.Length ? (char?)null : text[pos];
         
         /// <summary>
@@ -295,7 +298,10 @@ namespace SamSharp.Reciter
             {
                 if (Matches(text, inputPos))
                 {
-                    Debug.WriteLine($"{source} -> {target}");
+                    if (Constants.ENABLE_DEBUGGER)
+                    {
+                        Debug.WriteLine($"{source} -> {target}");
+                    }
                     callback(target, match.Length);
                     return true;
                 }
