@@ -64,22 +64,25 @@ namespace SamSharp.Renderer
 
         private void PrintOutput(FramesData framesData)
         {
-            Debug.WriteLine("===============================================");
-            Debug.WriteLine("Final data for speech output:");
-            Debug.WriteLine("flags ampl1 freq1 ampl2 freq2 ampl3 freq3 pitch");
-            Debug.WriteLine("-----------------------------------------------");
-            for (int i = 0; i < framesData.SampledConsonantFlags.Count; i++)
+            if (Constants.ENABLE_DEBUGGER)
             {
-                Debug.WriteLine($" {framesData.SampledConsonantFlags[i].ToString().PadLeft(5, '0')}" +
-                                $" {framesData.Amplitudes.Mouth[i].ToString().PadLeft(5, '0')}" +
-                                $" {framesData.Frequencies.Mouth[i].ToString().PadLeft(5, '0')}" +
-                                $" {framesData.Amplitudes.Throat[i].ToString().PadLeft(5, '0')}" +
-                                $" {framesData.Frequencies.Throat[i].ToString().PadLeft(5, '0')}" +
-                                $" {framesData.Amplitudes.Formant3[i].ToString().PadLeft(5, '0')}" +
-                                $" {framesData.Frequencies.Formant3[i].ToString().PadLeft(5, '0')}" +
-                                $" {framesData.Pitches[i].ToString().PadLeft(5, '0')}");
+                Debug.WriteLine("===============================================");
+                Debug.WriteLine("Final data for speech output:");
+                Debug.WriteLine("flags ampl1 freq1 ampl2 freq2 ampl3 freq3 pitch");
+                Debug.WriteLine("-----------------------------------------------");
+                for (int i = 0; i < framesData.SampledConsonantFlags.Count; i++)
+                {
+                    Debug.WriteLine($" {framesData.SampledConsonantFlags[i].ToString().PadLeft(5, '0')}" +
+                                    $" {framesData.Amplitudes.Mouth[i].ToString().PadLeft(5, '0')}" +
+                                    $" {framesData.Frequencies.Mouth[i].ToString().PadLeft(5, '0')}" +
+                                    $" {framesData.Amplitudes.Throat[i].ToString().PadLeft(5, '0')}" +
+                                    $" {framesData.Frequencies.Throat[i].ToString().PadLeft(5, '0')}" +
+                                    $" {framesData.Amplitudes.Formant3[i].ToString().PadLeft(5, '0')}" +
+                                    $" {framesData.Frequencies.Formant3[i].ToString().PadLeft(5, '0')}" +
+                                    $" {framesData.Pitches[i].ToString().PadLeft(5, '0')}");
+                }
+                Debug.WriteLine("===============================================");
             }
-            Debug.WriteLine("===============================================");
         }
     }
 }

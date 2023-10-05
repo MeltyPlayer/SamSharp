@@ -94,9 +94,12 @@ namespace SamSharp.Parser
         {
             for (int srcPos = 0; srcPos < input.Length; srcPos++)
             {
-                string tmp = input.ToLower();
-                Debug.WriteLine(
+                if (Constants.ENABLE_DEBUGGER)
+                {
+                  string tmp = input.ToLower();
+                  Debug.WriteLine(
                     $"Processing \"{tmp.JsSubstring(0, srcPos)}{tmp.JsSubstring(srcPos, 2).ToUpper()}{tmp.JsSubstring(srcPos + 2)}\"");
+                }
 
                 char char1 = input[srcPos];
                 char char2 = srcPos + 1 >= input.Length ? ' ' : input[srcPos + 1];

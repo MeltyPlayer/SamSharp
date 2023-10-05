@@ -27,13 +27,19 @@ namespace SamSharp.Parser
 
         private void SetPhoneme(int pos, int value)
         {
-            Debug.WriteLine($"{pos} CHANGE: {GetPhonemeNamePos(pos)} -> {phonemeNameTable[value]}");
+            if (Constants.ENABLE_DEBUGGER)
+            {
+                Debug.WriteLine($"{pos} CHANGE: {GetPhonemeNamePos(pos)} -> {phonemeNameTable[value]}");
+            }
             phonemeIndexes[pos] = value;
         }
 
         private void InsertPhoneme(int pos, int value, int stressValue, int length = 0)
         {
-            Debug.WriteLine($"{pos} INSERT: {phonemeNameTable[value]}");
+            if (Constants.ENABLE_DEBUGGER)
+            {
+                Debug.WriteLine($"{pos} INSERT: {phonemeNameTable[value]}");
+            }
             for (int i = phonemeIndexes.Count - 1; i >= pos; i--)
             {
                 phonemeIndexes[i + 1] = phonemeIndexes[i];
@@ -50,7 +56,10 @@ namespace SamSharp.Parser
 
         private void SetStress(int pos, int stressValue)
         {
-            Debug.WriteLine($"{pos} \"{GetPhonemeNamePos(pos)}\" SET STRESS: {stresses[pos]} -> {stressValue}");
+            if (Constants.ENABLE_DEBUGGER)
+            {
+                Debug.WriteLine($"{pos} \"{GetPhonemeNamePos(pos)}\" SET STRESS: {stresses[pos]} -> {stressValue}");
+            }
             stresses[pos] = stressValue;
         }
 
@@ -58,7 +67,10 @@ namespace SamSharp.Parser
 
         private void SetLength(int pos, int length)
         {
-            Debug.WriteLine($"{pos} \"{GetPhonemeNamePos(pos)}\" SET LENGTH: {phonemeLengths[pos]} -> {length}");
+            if (Constants.ENABLE_DEBUGGER)
+            {
+                Debug.WriteLine($"{pos} \"{GetPhonemeNamePos(pos)}\" SET LENGTH: {phonemeLengths[pos]} -> {length}");
+            }
 
             if ((length & 0x80) != 0)
             {
@@ -151,23 +163,26 @@ namespace SamSharp.Parser
 
         private void PrintPhonemes()
         {
-            Debug.WriteLine("==================================");
-            Debug.WriteLine("Internal Phoneme Presentation:");
-            Debug.WriteLine(" pos  idx  phoneme  length  stress");
-            Debug.WriteLine("----------------------------------");
-
-            for (int i = 0; i < phonemeIndexes.Count; i++)
+            if (Constants.ENABLE_DEBUGGER)
             {
-                string Name() => (phonemeIndexes[i] < 81 ? GetPhonemeNamePos(i) : "??")!;
+                Debug.WriteLine("==================================");
+                Debug.WriteLine("Internal Phoneme Presentation:");
+                Debug.WriteLine(" pos  idx  phoneme  length  stress");
+                Debug.WriteLine("----------------------------------");
+
+                for (int i = 0; i < phonemeIndexes.Count; i++)
+                {
+                    string Name() => (phonemeIndexes[i] < 81 ? GetPhonemeNamePos(i) : "??")!;
+                    
+                    Debug.WriteLine($" {i.ToString().PadLeft(3, '0')}" +
+                                    $"  {phonemeIndexes[i].ToString().PadLeft(3, '0')}" +
+                                    $"  {Name()}" +
+                                    $"       {phonemeLengths[i].ToString().PadLeft(3, '0')}" +
+                                    $"     {stresses[i].ToString().PadLeft(3, '0')}");
+                }
                 
-                Debug.WriteLine($" {i.ToString().PadLeft(3, '0')}" +
-                                $"  {phonemeIndexes[i].ToString().PadLeft(3, '0')}" +
-                                $"  {Name()}" +
-                                $"       {phonemeLengths[i].ToString().PadLeft(3, '0')}" +
-                                $"     {stresses[i].ToString().PadLeft(3, '0')}");
+                Debug.WriteLine("==================================");
             }
-            
-            Debug.WriteLine("==================================");
         }
     }
 }
